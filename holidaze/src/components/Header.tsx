@@ -1,27 +1,36 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
+  const navigate = useNavigate()
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'))
+  const [user, setUser] = useState(() =>
+    JSON.parse(localStorage.getItem('user') ?? 'null'),
+  )
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setIsLoggedIn(!!localStorage.getItem('token'))
+      setUser(JSON.parse(localStorage.getItem('user') ?? 'null'))
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
+
+  function logout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setIsLoggedIn(false)
+    setUser(null)
+    navigate({ to: '/' })
+  }
   return (
     <header className="sticky top-0 z-50 border-b border-var(--line) bg-var(--header-bg) px-4 backdrop-blur-lg">
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
         <div className="ml-auto flex items-center gap-1.5 sm:ml-0 sm:gap-2">
           <a
-            href=""
-            target="_blank"
-            rel="noreferrer"
-            className="hidden rounded-xl p-2 text-var(--sea-ink-soft) transition hover:bg-var(--link-bg-hover) hover:text-var(--sea-ink) sm:block"
-          >
-            <span className="sr-only">Follow TanStack on X</span>
-            <svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24">
-              <path
-                fill="currentColor"
-                d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-              />
-            </svg>
-          </a>
-          <a
-            href="https://github.com/TanStack"
+            href="https://github.com/jotvibfeng/Project-Exam2-Oct_pt-2026"
             target="_blank"
             rel="noreferrer"
             className="hidden rounded-xl p-2 text-var(--sea-ink-soft) transition hover:bg-var(--link-bg-hover) hover:text-var(--sea-ink) sm:block"
@@ -53,14 +62,39 @@ export default function Header() {
           >
             About
           </Link>
-          <a
-            href="https://tanstack.com/start/latest/docs/framework/react/overview"
+          <Link
+            to="/profile"
             className="nav-link"
-            target="_blank"
-            rel="noreferrer"
+            activeProps={{ className: 'nav-link is-active' }}
           >
-            Docs
-          </a>
+            Profile
+          </Link>
+        </div>
+
+        <div className="order-2 w-full sm:order-3 sm:w-auto font-semibold ml-auto">
+          {isLoggedIn ? (
+            <div className="flex items-center gap-3">
+              <Link to="/profile" className="flex items-center gap-2">
+                <img
+                  src={user?.avatar?.url || 'https://placehold.co/40x40'}
+                  alt={user?.name}
+                  className="w-8 h-8 rounded-full object-cover border"
+                />
+                <span className="text-sm font-semibold">{user?.name}</span>
+              </Link>
+              <button onClick={logout} className="nav-link cursor-pointer">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="nav-link"
+              activeProps={{ className: 'nav-link is-active' }}
+            >
+              Login
+            </Link>
+          )}
         </div>
       </nav>
     </header>
