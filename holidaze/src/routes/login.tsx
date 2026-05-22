@@ -33,12 +33,20 @@ function RouteLogin() {
   })
 
   return (
-    <main className="h-screen">
-      <div className="w-full h-screen flex">
+    <main className="h-[calc(100vh-73px)] overflow-hidden">
+      <div className="w-full h-full flex">
         {/* Left half */}
-        <div className="w-1/2 h-full flex flex-col bg-[#acac9a] items-center justify-center"></div>
+        <div className="relative w-1/2 h-full">
+          <img
+            src="/pexels-asadphoto-9470485.jpg"
+            alt="Holidaze"
+            className="w-full h-full object-cover"
+          />
+          <h1 className="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white">
+            Welcome to Holidaze
+          </h1>
+        </div>
 
-        {/* Right half */}
         <div className="w-1/2 h-full bg-[#999292] flex flex-col p-20 justify-center">
           <div className="w-full flex flex-col max-w-450px mx-auto">
             <div className="w-full flex flex-col mb-10 text-white">
@@ -94,9 +102,13 @@ function RouteLogin() {
               >
                 Login
               </button>
-              <p className="text-sm text-white/70 text-center mt-2">
+              <p className="text-sm text-white/90 text-center mt-2">
                 Don't have an account?{' '}
-                <Link to="/register" className="text-white underline">
+                <Link
+                  to="/register"
+                  className="underline hover:opacity-70 transition"
+                  style={{ color: 'white' }}
+                >
                   Register
                 </Link>
               </p>

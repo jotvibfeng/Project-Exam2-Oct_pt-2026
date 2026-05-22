@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute, useRouterState } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Header from '../components/Header'
@@ -11,11 +11,14 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const hideFooter = pathname === '/login' || pathname === '/register'
+
   return (
     <>
       <Header />
       <Outlet />
-      <Footer />
+      {!hideFooter && <Footer />}
       <TanStackDevtools
         config={{
           position: 'bottom-right',
