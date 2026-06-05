@@ -59,7 +59,7 @@ function App() {
               key={venue.id}
               className="feature-card island-shell flex flex-col overflow-hidden rounded-2xl border border-(--line) transition"
             >
-              <div className="aspect-[4/3] w-full overflow-hidden bg-(--line)">
+              <div className="aspect-4/3 w-full overflow-hidden bg-(--line)">
                 {venue.media[0] ? (
                   <img
                     src={venue.media[0].url}
@@ -97,6 +97,7 @@ function App() {
                   </span>
                   <Link
                     to="/venues"
+                    search={{ id: venue.id }}
                     className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold text-white no-underline hover:bg-(--lagoon-deep) transition"
                   >
                     View

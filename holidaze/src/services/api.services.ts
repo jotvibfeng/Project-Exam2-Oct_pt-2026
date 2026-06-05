@@ -35,17 +35,20 @@ export async function getVenues(): Promise<Venues[]> {
   return json.data
 }
 
-export async function getVenueById(id: string, token: string): Promise<Venues> {
-  const response = await fetch(`${API_BASE}/venues/${id}`, {
-    headers: {
-      'X-Noroff-API-Key': API_KEY,
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export async function getVenueById(
+  id: string,
+  token?: string,
+): Promise<Venues> {
+  const headers: Record<string, string> = {
+    'X-Noroff-API-Key': API_KEY,
+  }
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  const response = await fetch(`${API_BASE}/venues/${id}`, { headers })
   if (!response.ok) {
     throw new Error(`Failed to fetch venue with id ${id}`)
   }
-  return response.json()
+  const json = await response.json()
+  return json.data
 }
 
 export async function createVenue(
