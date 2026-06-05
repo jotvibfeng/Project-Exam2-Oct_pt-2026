@@ -87,11 +87,12 @@ export async function updateVenue(
   return response.json()
 }
 
-export async function deleteVenue(id: string): Promise<void> {
+export async function deleteVenue(id: string, token: string): Promise<void> {
   const response = await fetch(`${API_BASE}/venues/${id}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${API_KEY}`,
+      'X-Noroff-API-Key': API_KEY,
+      Authorization: `Bearer ${token}`,
     },
   })
   if (!response.ok) {
@@ -143,6 +144,21 @@ export async function updateVenueProfileAvatar(
     }),
   })
   if (!response.ok) throw new Error("Couldn't update the profile avatar")
+  const json = await response.json()
+  return json.data
+}
+
+export async function getMangerVenueBooking(nmae: string, token: string) {
+  const response = await fetch(
+    `${API_BASE}/profiles/${nmae}/venues?_bookings=true`,
+    {
+      headers: {
+        'X-Noroff-API-Key': API_KEY,
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+  if (!response.ok) throw new Error("Couldn't fetch the manager venue bookings")
   const json = await response.json()
   return json.data
 }

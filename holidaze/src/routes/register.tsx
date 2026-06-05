@@ -37,6 +37,9 @@ function RegisterComponent() {
     onSubmit: async ({ value }) => {
       await registerUser(value)
       navigate({ to: '/profile' })
+      const res = await registerUser(value)
+      localStorage.setItem('token', res.data.accessToken)
+      localStorage.setItem('user', JSON.stringify(res.data))
     },
     validators: {
       onSubmit: formSchema,
@@ -77,7 +80,8 @@ function RegisterComponent() {
               />
               {field.state.meta.errors.length > 0 && (
                 <p className="text-sm text-red-600 mt-1">
-                  {String(field.state.meta.errors[0])}
+                  {(field.state.meta.errors[0] as any)?.message ??
+                    String(field.state.meta.errors[0])}
                 </p>
               )}
             </div>
