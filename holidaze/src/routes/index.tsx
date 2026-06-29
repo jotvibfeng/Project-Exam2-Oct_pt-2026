@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { getVenues } from '#/services/api.services'
 import type { Venues } from '#/services/api.services'
+import SearchBar from '#/components/searchBar'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -47,6 +48,8 @@ function App() {
           Find your perfect getaway from our curated collection of venues.
         </p>
       </div>
+
+      <SearchBar />
 
       {venues.length === 0 ? (
         <p className="text-center text-(--sea-ink-soft) animate-pulse">
