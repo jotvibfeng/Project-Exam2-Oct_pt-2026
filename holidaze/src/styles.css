@@ -3,7 +3,7 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'roboto', ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -282,7 +282,6 @@ a {
   }
 }
 
-/* Search suggestions dropdown */
 .search-suggestions {
   position: absolute;
   top: calc(100% + 6px);
@@ -315,4 +314,17 @@ a {
 .search-suggestions li button:hover {
   background: color-mix(in oklab, var(--lagoon) 10%, transparent);
   color: var(--lagoon-deep);
+}
+
+/* Remove focus ring from designsystemet Search wrapper */
+.ds-search:focus-within,
+.ds-search:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ds-input:focus,
+.ds-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }

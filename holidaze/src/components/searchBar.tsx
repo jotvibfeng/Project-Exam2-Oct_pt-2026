@@ -81,7 +81,7 @@ export default function SearchBar() {
         <Search style={{ flex: 1 }}>
           <input
             type="text"
-            className="ds-input"
+            className="relative left-5 ds-input focus:outline-none"
             aria-label="Search venues"
             placeholder="Search venues…"
             value={searchTerm}

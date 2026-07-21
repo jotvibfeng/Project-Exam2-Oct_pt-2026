@@ -38,10 +38,10 @@ function App() {
   }, [])
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-14">
+    <main className="page-wrap  pb-16 pt-14">
       <div className="mb-10 text-center">
         <p className="island-kicker mb-2">Discover &amp; Book</p>
-        <h1 className="display-title text-4xl font-bold text-(--sea-ink) sm:text-5xl">
+        <h1 className="display-title text-4xl font-bold  text-(--sea-ink) sm:text-5xl">
           Welcome to Holidaze
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-(--sea-ink-soft)">
@@ -56,7 +56,7 @@ function App() {
           Loading venues…
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {venues.map((venue) => (
             <div
               key={venue.id}
@@ -101,7 +101,7 @@ function App() {
                   <Link
                     to="/venues"
                     search={{ id: venue.id }}
-                    className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold text-white no-underline hover:bg-(--lagoon-deep) transition"
+                    className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold !text-white no-underline hover:bg-(--lagoon-deep) transition"
                   >
                     View
                   </Link>
