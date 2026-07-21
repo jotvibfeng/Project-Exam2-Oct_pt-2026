@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getVenueById } from '#/services/api.services'
+import LoadingBar from './loadingBar'
 
 export default function VenuePage({ id }: { id?: string }) {
   const [activeImg, setActiveImg] = useState(0)
@@ -11,7 +12,11 @@ export default function VenuePage({ id }: { id?: string }) {
     isError,
   } = useQuery({
     queryKey: ['venue', id],
-    queryFn: () => getVenueById(id!),
+    queryFn: async () => {
+      const data = await getVenueById(id!)
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      return data
+    },
     enabled: !!id,
   })
 
@@ -28,12 +33,7 @@ export default function VenuePage({ id }: { id?: string }) {
       </main>
     )
 
-  if (isPending)
-    return (
-      <main className="page-wrap px-4 py-20 text-center">
-        <p className="animate-pulse text-(--sea-ink-soft)">Loading venue…</p>
-      </main>
-    )
+  if (isPending) return <LoadingBar />
 
   if (isError)
     return (
