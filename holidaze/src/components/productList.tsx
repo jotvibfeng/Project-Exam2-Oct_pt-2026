@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getVenues } from '#/services/api.services'
 import { Link } from '@tanstack/react-router'
-
-
+import LoadingBar from './loadingBar'
 
 // eslint-disable-next-line no-shadow
 const rating = (rating: number) => {
@@ -20,9 +19,17 @@ const rating = (rating: number) => {
 }
 
 export function ProductList() {
-  const { data: venues = [] } = useQuery({
+  const {
+    data: venues,
+    isPending,
+    isError,
+  } = useQuery({
     queryKey: ['venues'],
-    queryFn: getVenues,
+    queryFn: async () => {
+      const data = await getVenues()
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      return data
+    },
   })
 
   return (
@@ -37,11 +44,15 @@ export function ProductList() {
         </p>
       </div>
 
-   
-
-      {venues.length === 0 ? (
+      {isPending ? (
+        <LoadingBar />
+      ) : isError ? (
         <p className="text-center text-(--sea-ink-soft) animate-pulse">
-          Loading venues…
+          Could not load venues.
+        </p>
+      ) : venues.length === 0 ? (
+        <p className="text-center text-(--sea-ink-soft) animate-pulse">
+          No venues available.
         </p>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
