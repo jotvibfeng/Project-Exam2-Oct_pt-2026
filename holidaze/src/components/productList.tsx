@@ -3,18 +3,17 @@ import { getVenues } from '#/services/api.services'
 import { Link } from '@tanstack/react-router'
 import LoadingBar from './loadingBar'
 
-// eslint-disable-next-line no-shadow
-const rating = (rating: number) => {
-  if (rating >= 4.5) {
-    return 'Excellent'
-  } else if (rating >= 3.5) {
-    return 'Good'
-  } else if (rating >= 2.5) {
-    return 'Average'
-  } else if (rating >= 1.5) {
-    return 'Poor'
+const rating = (score: number) => {
+  if (score >= 4.5) {
+    return '5/5 Excellent'
+  } else if (score >= 3.5) {
+    return '4/5 Good'
+  } else if (score >= 2.5) {
+    return '3/5 Average'
+  } else if (score >= 1.5) {
+    return '2/5 Poor'
   } else {
-    return 'Terrible'
+    return '1/5 Terrible'
   }
 }
 
@@ -47,8 +46,8 @@ export function ProductList() {
       {isPending ? (
         <LoadingBar />
       ) : isError ? (
-        <p className="text-center text-(--sea-ink-soft) animate-pulse">
-          Could not load venues.
+        <p className="text-center text-red-500 animate-pulse">
+          Could not find the venues. Please try again later.
         </p>
       ) : venues.length === 0 ? (
         <p className="text-center text-(--sea-ink-soft) animate-pulse">
@@ -100,7 +99,7 @@ export function ProductList() {
                   <Link
                     to="/venues"
                     search={{ id: venue.id }}
-                    className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold !text-white no-underline hover:bg-(--lagoon-deep) transition"
+                    className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold text-white! no-underline hover:bg-(--lagoon-deep) transition"
                   >
                     View
                   </Link>

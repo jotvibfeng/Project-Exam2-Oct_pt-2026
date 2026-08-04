@@ -3,9 +3,11 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getVenueById } from '#/services/api.services'
 import LoadingBar from './loadingBar'
+import VenueBooking from './venueBooking'
 
 export default function VenuePage({ id }: { id?: string }) {
   const [activeImg, setActiveImg] = useState(0)
+  const [showBooking, setShowBooking] = useState(false)
   const {
     data: venue,
     isPending,
@@ -38,7 +40,7 @@ export default function VenuePage({ id }: { id?: string }) {
   if (isError)
     return (
       <main className="page-wrap px-4 py-20 text-center">
-        <p className="text-(--sea-ink-soft)">Could not load venue.</p>
+        <p className="text-(--sea-ink-soft)">Could not find the venue.</p>
         <Link
           to="/"
           className="mt-4 inline-block text-(--lagoon) hover:underline"
@@ -150,9 +152,18 @@ export default function VenuePage({ id }: { id?: string }) {
             </span>
             <span className="text-sm text-(--sea-ink-soft)"> / night</span>
           </div>
-          <button className="w-full rounded-xl bg-(--lagoon) py-3 text-sm font-semibold text-white hover:bg-(--lagoon-deep) transition cursor-pointer">
+          <button
+            onClick={() => setShowBooking(true)}
+            className="w-full rounded-xl bg-(--lagoon) py-3 text-sm font-semibold text-white hover:bg-(--lagoon-deep) transition cursor-pointer"
+          >
             Book Now
           </button>
+          {showBooking && (
+            <VenueBooking
+              venueId={venue.id}
+              onClose={() => setShowBooking(false)}
+            />
+          )}
           <p className="mt-3 text-center text-xs text-(--sea-ink-soft)">
             You won't be charged yet
           </p>

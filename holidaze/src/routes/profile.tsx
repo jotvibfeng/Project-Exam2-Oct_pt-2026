@@ -5,6 +5,7 @@ import {
   getVenueBookings,
   updateVenueProfileAvatar,
 } from '#/services/api.services'
+import CreateVenue from '#/components/createVenue'
 
 export const Route = createFileRoute('/profile')({
   component: ProfilePage,
@@ -20,6 +21,7 @@ function ProfilePage() {
   const [editingAvatar, setEditingAvatar] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string>('')
   const [avatarError, setAvatarError] = useState<string | null>(null)
+  const [showCreateVenue, setShowCreateVenue] = useState(false)
 
   useEffect(() => {
     if (!user.name || !token) {
@@ -30,7 +32,9 @@ function ProfilePage() {
       setVenueProfile(data)
       setAvatarUrl(data.avatar?.url ?? '')
     })
-    getVenueBookings(user.name, token).then((data) => setVenueBookings(data))
+    getVenueBookings(user.name, token)
+      .then((data) => setVenueBookings(data))
+      .catch((err) => console.error('bookings error:', err))
   }, [])
 
   async function saveAvatar() {
@@ -128,9 +132,15 @@ function ProfilePage() {
       {venueProfile.venueManager && (
         <section className="mt-8">
           <h2 className="text-xl font-bold text-(--sea-ink) mb-4">My Venues</h2>
-          <button className="px-2 py-2 bg-(--lagoon) text-white text-sm rounded-lg hover:bg-(--lagoon-deep) transition cursor-pointer">
-            create Venue
+          <button
+            onClick={() => setShowCreateVenue(true)}
+            className="px-2 py-2 bg-(--lagoon) text-white text-sm rounded-lg hover:bg-(--lagoon-deep) transition cursor-pointer"
+          >
+            Create Venue
           </button>
+          {showCreateVenue && (
+            <CreateVenue onClose={() => setShowCreateVenue(false)} />
+          )}
           <p className="text-(--sea-ink-soft) text-sm">
             No venues created yet.
           </p>

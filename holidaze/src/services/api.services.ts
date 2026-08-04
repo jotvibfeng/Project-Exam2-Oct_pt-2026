@@ -151,9 +151,9 @@ export async function updateVenueProfileAvatar(
   return json.data
 }
 
-export async function getMangerVenueBooking(nmae: string, token: string) {
+export async function getManagerVenueBooking(name: string, token: string) {
   const response = await fetch(
-    `${API_BASE}/profiles/${nmae}/venues?_bookings=true`,
+    `${API_BASE}/profiles/${name}/venues?_bookings=true`,
     {
       headers: {
         'X-Noroff-API-Key': API_KEY,
@@ -162,6 +162,35 @@ export async function getMangerVenueBooking(nmae: string, token: string) {
     },
   )
   if (!response.ok) throw new Error("Couldn't fetch the manager venue bookings")
+  const json = await response.json()
+  return json.data
+}
+
+export async function createBooking(
+  data: {
+    venueId: string
+    dateFrom: string
+    dateTo: string
+    guests: number
+  },
+  token: string,
+) {
+  const response = await fetch(`${API_BASE}/bookings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Noroff-API-Key': API_KEY,
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    if (response.status === 409)
+      throw new Error(
+        'These dates are already booked. Please choose different dates.',
+      )
+    throw new Error('Could not create booking')
+  }
   const json = await response.json()
   return json.data
 }
