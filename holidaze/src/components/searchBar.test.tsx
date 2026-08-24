@@ -3,7 +3,6 @@ import { afterEach, describe, it, expect, vi } from 'vitest'
 import { useNavigate } from '@tanstack/react-router'
 import SearchBar from './searchBar'
 
-// mock router and API — SearchBar won't work without these
 vi.mock('@tanstack/react-router', () => ({ useNavigate: vi.fn() }))
 vi.mock('#/services/api.services', () => ({
   getVenues: vi.fn().mockResolvedValue([
@@ -23,7 +22,7 @@ describe('SearchBar', () => {
   it('shows suggestions when typing', async () => {
     vi.mocked(useNavigate).mockReturnValue(vi.fn())
     render(<SearchBar />)
-    await act(async () => {}) // flush getVenues promise so allVenues is populated
+    await act(async () => {})
     fireEvent.change(screen.getByPlaceholderText('Search venues…'), {
       target: { value: 'Venue' },
     })

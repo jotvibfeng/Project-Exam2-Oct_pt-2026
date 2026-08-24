@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
-import { registerUser } from '#/services/auth.services'
+import { registerUser, loginUser } from '#/services/auth.services'
 import { z } from 'zod'
 
 const formSchema = z.object({
@@ -15,7 +15,7 @@ const formSchema = z.object({
     .string()
     .min(8, { message: 'Must have minimum 8 characters' })
     .regex(/[!@#$%^&*]/, {
-      message: 'Must contain at least one symbol (!@#$%^&*)',
+      message: 'Must contain at least one symbol (!@#$%^&*.)',
     }),
   venueManager: z.boolean(),
 })
@@ -36,10 +36,13 @@ function RegisterComponent() {
     },
     onSubmit: async ({ value }) => {
       await registerUser(value)
+      const login = await loginUser({
+        email: value.email,
+        password: value.password,
+      })
+      localStorage.setItem('token', login.data.accessToken)
+      localStorage.setItem('user', JSON.stringify(login.data))
       navigate({ to: '/profile' })
-      const res = await registerUser(value)
-      localStorage.setItem('token', res.data.accessToken)
-      localStorage.setItem('user', JSON.stringify(res.data))
     },
     validators: {
       onSubmit: formSchema,

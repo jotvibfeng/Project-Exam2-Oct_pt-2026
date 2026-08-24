@@ -1,42 +1,61 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createVenue } from '#/services/api.services'
+import { updateVenue, deleteVenue } from '#/services/api.services'
 import { useState } from 'react'
 
-export default function CreateVenue({
-  onClose,
-  onCreated,
-}: {
+interface EditVenueProps {
+  venue: any
   onClose: () => void
-  onCreated?: (venue: any) => void
-}) {
+  onUpdated: (venue: any) => void
+  onDeleted: (id: string) => void
+}
+
+export default function EditVenue({
+  venue,
+  onClose,
+  onUpdated,
+  onDeleted,
+}: EditVenueProps) {
   const queryClient = useQueryClient()
-
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState(0)
-  const [maxGuests, setMaxGuests] = useState(1)
-  const [media, setMedia] = useState('')
-
   const token = localStorage.getItem('token') || ''
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({
+  const [name, setName] = useState(venue.name)
+  const [description, setDescription] = useState(venue.description)
+  const [price, setPrice] = useState(venue.price)
+  const [maxGuests, setMaxGuests] = useState(venue.maxGuests)
+  const [media, setMedia] = useState(venue.media?.[0]?.url ?? '')
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const {
+    mutate: update,
+    isPending: isUpdating,
+    isError: updateError,
+    isSuccess: updateSuccess,
+  } = useMutation({
     mutationFn: () =>
-      createVenue(
+      updateVenue(
+        venue.id,
         {
           name,
           description,
           price,
           maxGuests,
-          rating: 0,
           media: media ? [{ url: media, alt: '' }] : [],
-          meta: { wifi: false, parking: false, breakfast: false, pets: false },
         },
         token,
       ),
-    onSuccess: async (newVenue) => {
-      onCreated?.(newVenue)
+    onSuccess: async (updated) => {
+      onUpdated(updated)
       await queryClient.invalidateQueries({ queryKey: ['venues'] })
       setTimeout(onClose, 1200)
+    },
+  })
+
+  const { mutate: remove, isPending: isDeleting } = useMutation({
+    mutationFn: () => deleteVenue(venue.id, token),
+    onSuccess: async () => {
+      onDeleted(venue.id)
+      await queryClient.invalidateQueries({ queryKey: ['venues'] })
+      onClose()
     },
   })
 
@@ -47,9 +66,7 @@ export default function CreateVenue({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="bg-(--surface) rounded-2xl p-6 w-full max-w-md shadow-xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-(--sea-ink)">
-            Create a New Venue
-          </h2>
+          <h2 className="text-xl font-bold text-(--sea-ink)">Edit Venue</h2>
           <button
             onClick={onClose}
             className="text-(--sea-ink-soft) hover:text-(--sea-ink) transition text-xl leading-none cursor-pointer"
@@ -65,7 +82,6 @@ export default function CreateVenue({
             </label>
             <input
               type="text"
-              placeholder="e.g. Seaside Cottage"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={inputClass}
@@ -77,7 +93,6 @@ export default function CreateVenue({
               Description
             </label>
             <textarea
-              placeholder="Describe your venue…"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -126,24 +141,24 @@ export default function CreateVenue({
           </div>
         </div>
 
-        {isError && (
+        {updateError && (
           <p className="mt-3 text-sm text-red-600">
-            Error creating venue. Please try again.
+            Failed to update. Please try again.
           </p>
         )}
-        {isSuccess && (
+        {updateSuccess && (
           <p className="mt-3 text-sm text-green-600">
-            Venue created successfully!
+            Venue updated successfully!
           </p>
         )}
 
         <div className="mt-6 flex gap-3">
           <button
-            onClick={() => mutate()}
-            disabled={isPending || isSuccess}
+            onClick={() => update()}
+            disabled={isUpdating || updateSuccess}
             className="flex-1 py-2 bg-(--lagoon) text-white text-sm font-medium rounded-lg hover:bg-(--lagoon-deep) transition disabled:opacity-50 cursor-pointer"
           >
-            {isPending ? 'Creating…' : 'Create Venue'}
+            {isUpdating ? 'Saving…' : 'Save Changes'}
           </button>
           <button
             onClick={onClose}
@@ -151,6 +166,38 @@ export default function CreateVenue({
           >
             Cancel
           </button>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-(--line)">
+          {!confirmDelete ? (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="w-full py-2 text-sm text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition cursor-pointer"
+            >
+              Delete Venue
+            </button>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-red-600 text-center font-medium">
+                Are you sure? This cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => remove()}
+                  disabled={isDeleting}
+                  className="flex-1 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition disabled:opacity-50 cursor-pointer"
+                >
+                  {isDeleting ? 'Deleting…' : 'Yes, Delete'}
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="flex-1 py-2 bg-(--line) text-(--sea-ink) text-sm rounded-lg hover:opacity-80 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

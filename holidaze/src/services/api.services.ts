@@ -23,11 +23,14 @@ export interface Venues {
 }
 
 export async function getVenues(): Promise<Venues[]> {
-  const response = await fetch(`${API_BASE}/venues`, {
-    headers: {
-      'X-Noroff-API-Key': API_KEY,
+  const response = await fetch(
+    `${API_BASE}/venues?sort=created&sortOrder=desc&limit=100`,
+    {
+      headers: {
+        'X-Noroff-API-Key': API_KEY,
+      },
     },
-  })
+  )
   if (!response.ok) {
     throw new Error('Failed to fetch venues')
   }
@@ -65,9 +68,15 @@ export async function createVenue(
     body: JSON.stringify(venueData),
   })
   if (!response.ok) {
-    throw new Error('Failed to create venue')
+    let message = 'Failed to create venue'
+    try {
+      const err = await response.json()
+      message = err?.errors?.[0]?.message || err?.message || message
+    } catch {}
+    throw new Error(message)
   }
-  return response.json()
+  const json = await response.json()
+  return json.data
 }
 
 export async function updateVenue(
@@ -87,7 +96,8 @@ export async function updateVenue(
   if (!response.ok) {
     throw new Error(`Failed to update venue with id ${id}`)
   }
-  return response.json()
+  const json = await response.json()
+  return json.data
 }
 
 export async function deleteVenue(id: string, token: string): Promise<void> {
@@ -104,7 +114,7 @@ export async function deleteVenue(id: string, token: string): Promise<void> {
 }
 
 export async function getVenueProfile(name: string, token: string) {
-  const response = await fetch(`${API_BASE}/profiles/${name}`, {
+  const response = await fetch(`${API_BASE}/profiles/${name}?_venues=true`, {
     headers: {
       'X-Noroff-API-Key': API_KEY,
       Authorization: `Bearer ${token}`,
