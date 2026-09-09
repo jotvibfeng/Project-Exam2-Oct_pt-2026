@@ -66,7 +66,7 @@ export default function Header() {
 
         <div
           id="primary-navigation"
-          className={`${isMenuOpen ? 'flex' : 'hidden'} absolute inset-x-4 top-full flex-col gap-4 border-b border-var(--line) bg-(--surface-strong) px-4 py-5 text-sm font-semibold shadow-lg sm:static sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-x-4 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none`}
+          className={`${isMenuOpen ? 'flex' : 'hidden'} absolute inset-x-4 top-full flex-col gap-4 border-b border-var(--line) bg-(--surface-strong) px-4  py-5 text-sm font-semibold shadow-lg sm:ml-6 sm:static sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-x-4 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none`}
         >
           <Link
             to="/"
@@ -106,7 +106,7 @@ export default function Header() {
           ) : (
             <Link
               to="/login"
-              className="nav-link"
+              className="nav-link sm:ml-auto"
               activeProps={{ className: 'nav-link is-active' }}
               onClick={() => setIsMenuOpen(false)}
             >

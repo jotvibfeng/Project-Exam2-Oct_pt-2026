@@ -161,6 +161,7 @@ export default function VenuePage({ id }: { id?: string }) {
           {showBooking && (
             <VenueBooking
               venueId={venue.id}
+              maxGuests={venue.maxGuests}
               onClose={() => setShowBooking(false)}
             />
           )}

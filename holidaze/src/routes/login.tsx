@@ -33,10 +33,9 @@ function RouteLogin() {
   })
 
   return (
-    <main className="h-[calc(100vh-73px)] overflow-hidden">
-      <div className="w-full h-full flex">
-        {/* Left half */}
-        <div className="relative w-1/2 h-full">
+    <main className="h-[calc(100vh-73px)] ">
+      <div className="flex min-h-[calc(100vh-73px)] flex-col md:flex-row">
+        <div className="relative w-full h-1/2 md:w-1/2 md:h-full">
           <img
             src="/pexels-asadphoto-9470485.jpg"
             alt="Holidaze"
@@ -47,7 +46,7 @@ function RouteLogin() {
           </h1>
         </div>
 
-        <div className="w-1/2 h-full bg-[#999292] flex flex-col p-20 justify-center">
+        <div className="w-full h-1/2 bg-[#999292] flex flex-col p-20 justify-center md:w-1/2 md:h-full">
           <div className="w-full flex flex-col max-w-450px mx-auto">
             <div className="w-full flex flex-col mb-10 text-white">
               <h3 className="text-4xl font-bold mb-2">Login</h3>

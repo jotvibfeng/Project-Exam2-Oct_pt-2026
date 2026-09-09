@@ -208,11 +208,14 @@ export async function createBooking(
     body: JSON.stringify(data),
   })
   if (!response.ok) {
-    if (response.status === 409)
-      throw new Error(
-        'These dates are already booked. Please choose different dates.',
-      )
-    throw new Error('Could not create booking')
+    let message = `Could not create booking (${response.status})`
+    try {
+      const errorBody = await response.json()
+      message = errorBody.errors?.[0]?.message ?? errorBody.message ?? message
+    } catch {
+      // Keep the status-based message when the API has no JSON error body.
+    }
+    throw new Error(message)
   }
   const json = await response.json()
   return json.data
