@@ -56,9 +56,11 @@ export function ProductList() {
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {venues.map((venue) => (
-            <div
+            <Link
               key={venue.id}
-              className="feature-card island-shell flex flex-col overflow-hidden rounded-2xl border border-(--line) transition"
+              to="/venues"
+              search={{ id: venue.id }}
+              className="feature-card island-shell flex flex-col overflow-hidden rounded-2xl border border-(--line) no-underline transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="aspect-4/3 w-full overflow-hidden bg-(--line)">
                 {venue.media[0] ? (
@@ -96,16 +98,12 @@ export function ProductList() {
                       / night
                     </span>
                   </span>
-                  <Link
-                    to="/venues"
-                    search={{ id: venue.id }}
-                    className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold text-white! no-underline hover:bg-(--lagoon-deep) transition"
-                  >
+                  <span className="rounded-lg bg-(--lagoon) px-3 py-1.5 text-sm font-semibold text-white">
                     View
-                  </Link>
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

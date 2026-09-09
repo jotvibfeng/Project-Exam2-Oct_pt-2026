@@ -22,6 +22,19 @@ export interface Venues {
   }
 }
 
+function removeImagePageUrls(venue: Venues): Venues {
+  return {
+    ...venue,
+    media: venue.media.filter((media) => {
+      try {
+        return new URL(media.url).hostname !== 'ibb.co'
+      } catch {
+        return false
+      }
+    }),
+  }
+}
+
 export async function getVenues(): Promise<Venues[]> {
   const response = await fetch(
     `${API_BASE}/venues?sort=created&sortOrder=desc&limit=100`,
@@ -35,7 +48,7 @@ export async function getVenues(): Promise<Venues[]> {
     throw new Error('Failed to fetch venues')
   }
   const json = await response.json()
-  return json.data
+  return json.data.map(removeImagePageUrls)
 }
 
 export async function getVenueById(
@@ -51,7 +64,7 @@ export async function getVenueById(
     throw new Error(`Failed to fetch venue with id ${id}`)
   }
   const json = await response.json()
-  return json.data
+  return removeImagePageUrls(json.data)
 }
 
 export async function createVenue(

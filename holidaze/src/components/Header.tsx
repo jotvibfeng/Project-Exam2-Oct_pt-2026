@@ -1,10 +1,12 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import { Menu, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 
 export default function Header() {
   const navigate = useNavigate()
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'))
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(() =>
     JSON.parse(localStorage.getItem('user') ?? 'null'),
   )
@@ -23,12 +25,14 @@ export default function Header() {
     localStorage.removeItem('user')
     setIsLoggedIn(false)
     setUser(null)
+    setIsMenuOpen(false)
     navigate({ to: '/' })
   }
+
   return (
     <header className="sticky top-0 z-50 border-b border-var(--line) bg-var(--header-bg) px-4 backdrop-blur-lg">
-      <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
-        <div className="ml-auto flex items-center gap-1.5 sm:ml-0 sm:gap-2">
+      <nav className="page-wrap flex items-center py-3 sm:py-4">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <a
             href="https://github.com/jotvibfeng/Project-Exam2-Oct_pt-2026"
             target="_blank"
@@ -47,11 +51,28 @@ export default function Header() {
           <ThemeToggle />
         </div>
 
-        <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-2 sm:w-auto sm:flex-nowrap sm:pb-0">
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+          className="ml-auto  inline-flex rounded-lg p-2 text-var(--sea-ink-soft) transition hover:bg-var(--link-bg-hover) hover:text-var(--sea-ink) focus:outline-none focus:ring-2 focus:ring-var(--sea-ink) sm:hidden"
+          aria-expanded={isMenuOpen}
+          aria-controls="primary-navigation"
+          aria-label={
+            isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
+          }
+        >
+          {isMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </button>
+
+        <div
+          id="primary-navigation"
+          className={`${isMenuOpen ? 'flex' : 'hidden'} absolute inset-x-4 top-full flex-col gap-4 border-b border-var(--line) bg-(--surface-strong) px-4 py-5 text-sm font-semibold shadow-lg sm:static sm:flex sm:flex-1 sm:flex-row sm:items-center sm:gap-x-4 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none`}
+        >
           <Link
             to="/"
             className="nav-link"
             activeProps={{ className: 'nav-link is-active' }}
+            onClick={() => setIsMenuOpen(false)}
           >
             Home
           </Link>
@@ -59,15 +80,18 @@ export default function Header() {
             to="/about"
             className="nav-link"
             activeProps={{ className: 'nav-link is-active' }}
+            onClick={() => setIsMenuOpen(false)}
           >
             About
           </Link>
-        </div>
 
-        <div className="order-2 w-full sm:order-3 sm:w-auto font-semibold ml-auto">
           {isLoggedIn ? (
-            <div className="flex items-center gap-3">
-              <Link to="/profile" className="flex items-center gap-2">
+            <div className="flex items-center gap-3 sm:ml-auto">
+              <Link
+                to="/profile"
+                className="flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <img
                   src={user?.avatar?.url || 'https://placehold.co/40x40'}
                   alt={user?.name}
@@ -84,6 +108,7 @@ export default function Header() {
               to="/login"
               className="nav-link"
               activeProps={{ className: 'nav-link is-active' }}
+              onClick={() => setIsMenuOpen(false)}
             >
               Login
             </Link>

@@ -145,7 +145,7 @@ export default function VenuePage({ id }: { id?: string }) {
           </div>
         </div>
 
-        <div className="island-shell rounded-2xl border border-(--line) p-6 h-fit">
+        <div className="island-shell h-fit w-full max-w-md justify-self-center rounded-2xl border border-(--line) p-6 lg:max-w-none lg:justify-self-stretch">
           <div className="mb-4">
             <span className="text-3xl font-bold text-(--sea-ink)">
               ${venue.price}
@@ -154,7 +154,7 @@ export default function VenuePage({ id }: { id?: string }) {
           </div>
           <button
             onClick={() => setShowBooking(true)}
-            className="w-full rounded-xl bg-(--lagoon) py-3 text-sm font-semibold text-white hover:bg-(--lagoon-deep) transition cursor-pointer"
+            className="rounded-xl bg-(--lagoon) px-6 py-3 text-sm font-semibold text-white transition hover:bg-(--lagoon-deep) cursor-pointer"
           >
             Book Now
           </button>

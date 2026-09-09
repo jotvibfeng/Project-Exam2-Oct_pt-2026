@@ -25,7 +25,7 @@ export default function VenueBooking({
   })
 
   return (
-    <div className="island-shell w-full max-w-md rounded-2xl p-6 shadow-xl">
+    <div className="island-shell w-full max-w-md rounded-3xl p-6 shadow-xl">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-slate-900">
           Book this venue
