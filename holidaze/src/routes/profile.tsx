@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import ProfileHeader from '#/components/profileheader.tsx'
+import ProfileHeader from '#/components/profileHeader.tsx'
 import MyVenues from '#/components/myVenues.tsx'
 import MyBookings from '#/components/myBooking.tsx'
 import { useProfileData } from '#/hooks/userProfileData.ts'

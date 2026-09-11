@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { updateVenueProfileAvatar } from '#/services/api.services'
 
-export default function ProfileHeader({
+export default function profileHeader({
   profile,
   user,
   token,
