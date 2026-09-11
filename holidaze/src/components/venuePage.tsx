@@ -4,10 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import { getVenueById } from '#/services/api.services'
 import LoadingBar from './loadingBar'
 import VenueBooking from './venueBooking'
+import { getAverageRating, getUserRating, saveRating } from '#/utils/ratings'
 
 export default function VenuePage({ id }: { id?: string }) {
   const [activeImg, setActiveImg] = useState(0)
   const [showBooking, setShowBooking] = useState(false)
+  const [ratingVersion, setRatingVersion] = useState(0)
   const {
     data: venue,
     isPending,
@@ -57,6 +59,10 @@ export default function VenuePage({ id }: { id?: string }) {
     { label: 'Pets allowed', enabled: venue.meta.pets },
   ]
 
+  const displayRating = getAverageRating(venue.id, venue.rating)
+  // recomputed on every ratingVersion bump so a new guest rating shows up immediately
+  void ratingVersion
+
   return (
     <main className="page-wrap px-4 pb-20 pt-10">
       <Link
@@ -66,7 +72,6 @@ export default function VenuePage({ id }: { id?: string }) {
         ← Back to venues
       </Link>
 
-      {/* Image gallery */}
       {venue.media.length > 0 && (
         <div className="mb-8">
           <div className="overflow-hidden rounded-2xl  w-full bg-(--line)">
@@ -101,7 +106,6 @@ export default function VenuePage({ id }: { id?: string }) {
       )}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-        {/* Left: details */}
         <div>
           <h1 className="display-title text-3xl font-bold text-(--sea-ink) sm:text-4xl">
             {venue.name}
@@ -110,7 +114,7 @@ export default function VenuePage({ id }: { id?: string }) {
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-(--sea-ink-soft)">
             <span className="flex items-center gap-1">
               <span className="text-(--lagoon)">★</span>
-              {venue.rating.toFixed(1)}
+              {displayRating.toFixed(1)}
             </span>
             <span>·</span>
             <span>Up to {venue.maxGuests} guests</span>
@@ -122,7 +126,11 @@ export default function VenuePage({ id }: { id?: string }) {
             </p>
           )}
 
-          {/* Amenities */}
+          <GuestRating
+            venueId={venue.id}
+            onRated={() => setRatingVersion((v) => v + 1)}
+          />
+
           <div className="mt-8">
             <h2 className="mb-3 text-lg font-semibold text-(--sea-ink)">
               Amenities
@@ -171,5 +179,64 @@ export default function VenuePage({ id }: { id?: string }) {
         </div>
       </div>
     </main>
+  )
+}
+
+function GuestRating({
+  venueId,
+  onRated,
+}: {
+  venueId: string
+  onRated: () => void
+}) {
+  const user = JSON.parse(localStorage.getItem('user') ?? 'null')
+  const [selected, setSelected] = useState(() =>
+    user ? getUserRating(venueId, user.name) : 0,
+  )
+  const [saved, setSaved] = useState(false)
+
+  if (!user) return null
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => {
+              setSelected(star)
+              setSaved(false)
+            }}
+            className={`text-2xl leading-none ${
+              star <= selected ? 'text-(--lagoon)' : 'text-(--line)'
+            }`}
+            aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          if (selected < 1) return
+          saveRating(venueId, user.name, selected)
+          onRated()
+          setSaved(true)
+        }}
+        disabled={selected < 1}
+        className="mt-2 rounded-lg bg-(--lagoon) px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-(--lagoon-deep) disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Submit rating
+      </button>
+
+      {saved && (
+        <p className="mt-2 text-sm font-medium text-emerald-700">
+          Thanks! Your rating has been saved.
+        </p>
+      )}
+    </div>
   )
 }

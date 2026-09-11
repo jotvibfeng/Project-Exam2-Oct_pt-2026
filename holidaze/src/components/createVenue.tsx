@@ -16,6 +16,10 @@ export default function CreateVenue({
   const [price, setPrice] = useState(0)
   const [maxGuests, setMaxGuests] = useState(1)
   const [media, setMedia] = useState('')
+  const [wifi, setWifi] = useState(false)
+  const [parking, setParking] = useState(false)
+  const [breakfast, setBreakfast] = useState(false)
+  const [pets, setPets] = useState(false)
 
   const token = localStorage.getItem('token') || ''
 
@@ -29,13 +33,14 @@ export default function CreateVenue({
           maxGuests,
           rating: 0,
           media: media ? [{ url: media, alt: '' }] : [],
-          meta: { wifi: false, parking: false, breakfast: false, pets: false },
+          meta: { wifi, parking, breakfast, pets },
         },
         token,
       ),
     onSuccess: async (newVenue) => {
       onCreated?.(newVenue)
       await queryClient.invalidateQueries({ queryKey: ['venues'] })
+      await queryClient.invalidateQueries({ queryKey: ['venues', newVenue.id] })
       setTimeout(onClose, 1200)
     },
   })
@@ -111,7 +116,49 @@ export default function CreateVenue({
               />
             </div>
           </div>
-
+          <div>
+            <label className="block text-sm font-medium text-(--sea-ink) mb-2">
+              Amenities
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={wifi}
+                  onChange={(e) => setWifi(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                WiFi
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={parking}
+                  onChange={(e) => setParking(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Parking
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={breakfast}
+                  onChange={(e) => setBreakfast(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Breakfast
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={pets}
+                  onChange={(e) => setPets(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Pets allowed
+              </label>
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium text-(--sea-ink) mb-1">
               Image URL (optional)

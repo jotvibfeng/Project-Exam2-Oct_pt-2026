@@ -23,6 +23,10 @@ export default function EditVenue({
   const [price, setPrice] = useState(venue.price)
   const [maxGuests, setMaxGuests] = useState(venue.maxGuests)
   const [media, setMedia] = useState(venue.media?.[0]?.url ?? '')
+  const [wifi, setWifi] = useState(venue.meta?.wifi ?? false)
+  const [parking, setParking] = useState(venue.meta?.parking ?? false)
+  const [breakfast, setBreakfast] = useState(venue.meta?.breakfast ?? false)
+  const [pets, setPets] = useState(venue.meta?.pets ?? false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const {
@@ -40,13 +44,15 @@ export default function EditVenue({
           price,
           maxGuests,
           media: media ? [{ url: media, alt: '' }] : [],
+          meta: { wifi, parking, breakfast, pets },
         },
         token,
       ),
     onSuccess: async (updated) => {
       onUpdated(updated)
       await queryClient.invalidateQueries({ queryKey: ['venues'] })
-      setTimeout(onClose, 1200)
+      await queryClient.invalidateQueries({ queryKey: ['venue', updated.id] })
+      onClose()
     },
   })
 
@@ -55,6 +61,7 @@ export default function EditVenue({
     onSuccess: async () => {
       onDeleted(venue.id)
       await queryClient.invalidateQueries({ queryKey: ['venues'] })
+      await queryClient.invalidateQueries({ queryKey: ['venue', venue.id] })
       onClose()
     },
   })
@@ -98,6 +105,50 @@ export default function EditVenue({
               rows={3}
               className={`${inputClass} resize-none`}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-(--sea-ink) mb-2">
+              Amenities
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={wifi}
+                  onChange={(e) => setWifi(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                WiFi
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={parking}
+                  onChange={(e) => setParking(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Parking
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={breakfast}
+                  onChange={(e) => setBreakfast(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Breakfast
+              </label>
+              <label className="flex items-center gap-2 text-sm text-(--sea-ink-soft)">
+                <input
+                  type="checkbox"
+                  checked={pets}
+                  onChange={(e) => setPets(e.target.checked)}
+                  className="h-4 w-4 accent-(--lagoon)"
+                />
+                Pets allowed
+              </label>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
