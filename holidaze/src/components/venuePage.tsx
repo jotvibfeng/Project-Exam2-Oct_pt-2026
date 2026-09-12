@@ -4,12 +4,14 @@ import { useQuery } from '@tanstack/react-query'
 import { getVenueById } from '#/services/api.services'
 import LoadingBar from './loadingBar'
 import VenueBooking from './venueBooking'
+import ErrorMessage from '#/components/errorHandel'
 import { getAverageRating, getUserRating, saveRating } from '#/utils/ratings'
 
 export default function VenuePage({ id }: { id?: string }) {
   const [activeImg, setActiveImg] = useState(0)
   const [showBooking, setShowBooking] = useState(false)
   const [ratingVersion, setRatingVersion] = useState(0)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const {
     data: venue,
     isPending,
@@ -60,7 +62,7 @@ export default function VenuePage({ id }: { id?: string }) {
   ]
 
   const displayRating = getAverageRating(venue.id, venue.rating)
-  // recomputed on every ratingVersion bump so a new guest rating shows up immediately
+
   void ratingVersion
 
   return (
@@ -161,11 +163,33 @@ export default function VenuePage({ id }: { id?: string }) {
             <span className="text-sm text-(--sea-ink-soft)"> / night</span>
           </div>
           <button
-            onClick={() => setShowBooking(true)}
+            onClick={() => {
+              const token = localStorage.getItem('token')
+              if (!token) {
+                setShowLoginPrompt(true)
+                return
+              }
+              setShowBooking(true)
+            }}
             className="rounded-xl bg-(--lagoon) px-6 py-3 text-sm font-semibold text-white transition hover:bg-(--lagoon-deep) cursor-pointer"
           >
             Book Now
           </button>
+          {showLoginPrompt && (
+            <div className="mt-3">
+              <ErrorMessage message="For booking your dream venue, you need an account." />
+              <p className="mt-2 text-sm text-(--sea-ink-soft)">
+                <Link to="/login" className="text-(--lagoon-deep) underline">
+                  Log in
+                </Link>{' '}
+                or{' '}
+                <Link to="/register" className="text-(--lagoon-deep) underline">
+                  create an account
+                </Link>{' '}
+                to continue.
+              </p>
+            </div>
+          )}
           {showBooking && (
             <VenueBooking
               venueId={venue.id}

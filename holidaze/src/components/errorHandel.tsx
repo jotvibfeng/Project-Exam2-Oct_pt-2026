@@ -4,7 +4,7 @@ export default function ErrorMessage({ message }: { message?: string }) {
   return (
     <p
       role="alert"
-      className="mt-2 rounded-lg bg-red-500/15 px-3 py-2 text-sm font-medium text-red-100"
+      className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700"
     >
       {message}
     </p>
